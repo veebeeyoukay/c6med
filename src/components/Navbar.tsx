@@ -35,6 +35,7 @@ export function Navbar() {
         </a>
 
         <nav className="hidden md:flex items-center space-x-1">
+          <a href="/about" className="nav-link">About</a>
           <a href="#services" className="nav-link">Services</a>
           <a href="#features" className="nav-link">Why Choose Us</a>
           <a href="#contact" className="nav-link">Contact</a>
@@ -65,6 +66,13 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-lg animate-scale-in">
           <div className="container py-4 flex flex-col space-y-4">
+            <a 
+              href="/about" 
+              className="px-3 py-2 text-c6-dark hover:text-c6-primary"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              About
+            </a>
             <a 
               href="#services" 
               className="px-3 py-2 text-c6-dark hover:text-c6-primary"
