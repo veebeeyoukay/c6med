@@ -39,7 +39,7 @@ export function Services() {
     <section id="services" className="py-20 bg-white">
       <div className="container">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <span className="inline-block py-1 px-3 rounded-full bg-c6-light text-c6-primary text-sm font-medium mb-4">
+          <span className="inline-block py-1 px-3 rounded-full bg-[#e2efd9] text-c6-primary text-sm font-medium mb-4">
             Our Services
           </span>
           <h2 className="mb-6 text-c6-dark">
@@ -57,7 +57,7 @@ export function Services() {
               className="feature-card group"
               style={{ animationDelay: `${0.1 + index * 0.1}s` }}
             >
-              <div className="p-3 mb-4 inline-block rounded-lg bg-c6-light/50 group-hover:bg-c6-light transition-colors">
+              <div className="p-3 mb-4 inline-block rounded-lg bg-[#e2efd9] group-hover:bg-[#e2efd9] transition-colors">
                 {service.icon}
               </div>
               <h3 className="text-xl font-medium mb-3 text-c6-dark group-hover:text-c6-primary transition-colors">

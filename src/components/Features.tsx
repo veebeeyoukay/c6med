@@ -31,7 +31,7 @@ export function Features() {
           </div>
           
           <div className="order-1 lg:order-2">
-            <span className="inline-block py-1 px-3 rounded-full bg-c6-light text-c6-primary text-sm font-medium mb-4">
+            <span className="inline-block py-1 px-3 rounded-full bg-[#e2efd9] text-c6-primary text-sm font-medium mb-4">
               Why Choose Us
             </span>
             
@@ -46,7 +46,7 @@ export function Features() {
             <ul className="space-y-4 mb-8">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-start">
-                  <div className="mr-3 p-1 rounded-full bg-c6-light text-c6-primary mt-0.5">
+                  <div className="mr-3 p-1 rounded-full bg-[#e2efd9] text-c6-primary mt-0.5">
                     <Check className="h-4 w-4" />
                   </div>
                   <span className="text-c6-dark">{feature}</span>

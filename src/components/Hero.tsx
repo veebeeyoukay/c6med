@@ -9,7 +9,7 @@ export function Hero() {
       <div className="container relative">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-6 inline-block">
-            <span className="inline-block py-1 px-3 rounded-full bg-[#e4f7e4] text-[#4caf50] text-sm font-medium animate-reveal">
+            <span className="inline-block py-1 px-3 rounded-full bg-[#e2efd9] text-[#4caf50] text-sm font-medium animate-reveal">
               The Building Block of Medical Education
             </span>
           </div>

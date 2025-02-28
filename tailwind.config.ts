@@ -19,6 +19,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Verdana', 'Geneva', 'sans-serif'],
+				verdana: ['Verdana', 'Geneva', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -64,12 +68,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				c6: {
-					primary: '#4caf50', // Updated to match logo's green
+					primary: '#4caf50', // Green from logo
 					secondary: '#2e7d32', // Darker green
 					accent: '#81c784', // Lighter green
-					light: '#e4f7e4', // Very light green
-					dark: '#1E293B', // Slate-800 (keeping this the same)
-					muted: '#94A3B8', // Slate-400 (keeping this the same)
+					light: '#e2efd9', // Light green from old site
+					dark: '#1E293B', // Slate-800
+					muted: '#94A3B8', // Slate-400
 				}
 			},
 			borderRadius: {
