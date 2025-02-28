@@ -10,9 +10,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-gray-200">
           <div className="md:col-span-2">
             <a href="/" className="inline-block mb-6">
-              <span className="text-2xl font-semibold text-c6-dark">
-                C<span className="text-c6-primary">6</span>Med
-              </span>
+              <img 
+                src="/lovable-uploads/92812108-a83a-475f-9eeb-8576fedecb18.png" 
+                alt="C6Med Logo" 
+                className="h-16 mb-4" 
+              />
             </a>
             <p className="text-c6-dark/70 max-w-md mb-6 text-balance">
               A boutique medical education and communications firm specializing in creating trusted connections between pharmaceutical companies and medical experts.
@@ -97,6 +99,7 @@ export function Footer() {
         
         <div className="pt-8 text-center text-c6-dark/60 text-sm">
           <p>&copy; {currentYear} C6Med. All rights reserved.</p>
+          <p className="mt-1 text-xs">The Building Block of Medical Education</p>
         </div>
       </div>
     </footer>

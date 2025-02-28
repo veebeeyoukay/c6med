@@ -27,9 +27,11 @@ export function Navbar() {
     >
       <div className="container flex items-center justify-between">
         <a href="/" className="flex items-center">
-          <span className="text-xl font-semibold text-c6-dark">
-            C<span className="text-c6-primary">6</span>Med
-          </span>
+          <img 
+            src="/lovable-uploads/92812108-a83a-475f-9eeb-8576fedecb18.png" 
+            alt="C6Med Logo" 
+            className="h-12 mr-2" 
+          />
         </a>
 
         <nav className="hidden md:flex items-center space-x-1">

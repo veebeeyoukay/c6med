@@ -64,12 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				c6: {
-					primary: '#0891B2', // Teal-600
-					secondary: '#164E63', // Teal-900
-					accent: '#06B6D4', // Teal-500
-					light: '#ECFEFF', // Teal-50
-					dark: '#1E293B', // Slate-800
-					muted: '#94A3B8', // Slate-400
+					primary: '#4caf50', // Updated to match logo's green
+					secondary: '#2e7d32', // Darker green
+					accent: '#81c784', // Lighter green
+					light: '#e4f7e4', // Very light green
+					dark: '#1E293B', // Slate-800 (keeping this the same)
+					muted: '#94A3B8', // Slate-400 (keeping this the same)
 				}
 			},
 			borderRadius: {
