@@ -1,5 +1,5 @@
 
-import { ArrowRight, Calendar, Award, Users, Heart, Building, Check } from "lucide-react";
+import { ArrowRight, Calendar, Award, Users, Heart, Building, Check, Linkedin } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -241,27 +241,41 @@ export default function About() {
                 name: "Marcy Fink DuVal",
                 role: "Founder & CEO",
                 bio: "With over 25 years in healthcare communications, Marcy brings exceptional expertise in medical education and pharmaceutical marketing. Her background includes leadership positions at major healthcare communications agencies. Marcy holds an MBA and has led award-winning medical education initiatives throughout her career.",
-                image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                linkedin: "https://www.linkedin.com/in/marcy-fink-duval-25b33b7/"
               },
               {
                 name: "Michael Roberts, PharmD",
                 role: "Medical Director",
                 bio: "Michael ensures scientific accuracy across all our communications, leveraging his extensive background in pharmacology and clinical practice to develop evidence-based content that resonates with healthcare professionals.",
-                image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                linkedin: "#"
               },
               {
                 name: "Sarah Johnson, MS",
                 role: "Strategic Communications Lead",
                 bio: "Sarah translates complex medical information into compelling narratives that resonate with healthcare professionals. Her background in both science and communications gives her a unique perspective on effective medical education.",
-                image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                linkedin: "#"
               }
             ].map((member, index) => (
               <div key={index} className="bg-gray-50 rounded-xl overflow-hidden transition-all hover:shadow-lg">
-                <img 
-                  src={member.image} 
-                  alt={member.name} 
-                  className="w-full h-64 object-cover object-center"
-                />
+                <div className="relative">
+                  <img 
+                    src={member.image} 
+                    alt={member.name} 
+                    className="w-full h-64 object-cover object-center"
+                  />
+                  <a 
+                    href={member.linkedin} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-c6-primary hover:text-white transition-colors"
+                    aria-label={`${member.name}'s LinkedIn Profile`}
+                  >
+                    <Linkedin className="h-5 w-5" />
+                  </a>
+                </div>
                 <div className="p-6">
                   <h3 className="text-xl font-medium text-c6-dark">{member.name}</h3>
                   <p className="text-c6-primary font-medium mb-3">{member.role}</p>
