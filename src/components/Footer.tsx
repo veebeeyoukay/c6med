@@ -48,23 +48,23 @@ export function Footer() {
             <h3 className="text-lg font-medium mb-6 text-c6-dark">Quick Links</h3>
             <ul className="space-y-4">
               <li>
-                <a href="#services" className="text-c6-dark/70 hover:text-c6-primary transition-colors">
+                <a href="/#services" className="text-c6-dark/70 hover:text-c6-primary transition-colors">
                   Our Services
                 </a>
               </li>
               <li>
-                <a href="#features" className="text-c6-dark/70 hover:text-c6-primary transition-colors">
+                <a href="/#features" className="text-c6-dark/70 hover:text-c6-primary transition-colors">
                   Why Choose Us
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-c6-dark/70 hover:text-c6-primary transition-colors">
+                <a href="/#contact" className="text-c6-dark/70 hover:text-c6-primary transition-colors">
                   Contact Us
                 </a>
               </li>
               <li>
                 <a href="/login" className="text-c6-dark/70 hover:text-c6-primary transition-colors">
-                  Client Login
+                  Login
                 </a>
               </li>
             </ul>

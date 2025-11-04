@@ -23,10 +23,10 @@ export function Hero() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-reveal stagger-3">
-            <a href="#contact" className="btn-primary w-full sm:w-auto">
+            <a href="/#contact" className="btn-primary w-full sm:w-auto">
               Schedule a Consultation
             </a>
-            <a href="#services" className="btn-secondary w-full sm:w-auto group">
+            <a href="/#services" className="btn-secondary w-full sm:w-auto group">
               Learn More 
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>

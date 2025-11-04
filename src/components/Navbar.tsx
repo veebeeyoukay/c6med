@@ -36,16 +36,16 @@ export function Navbar() {
 
         <nav className="hidden md:flex items-center space-x-1">
           <a href="/about" className="nav-link">About</a>
-          <a href="#services" className="nav-link">Services</a>
-          <a href="#features" className="nav-link">Why Choose Us</a>
-          <a href="#contact" className="nav-link">Contact</a>
+          <a href="/#services" className="nav-link">Services</a>
+          <a href="/#features" className="nav-link">Why Choose Us</a>
+          <a href="/#contact" className="nav-link">Contact</a>
           
           <a 
             href="/login" 
             className="ml-4 inline-flex items-center px-4 py-2 rounded-md bg-c6-light text-c6-primary hover:bg-c6-primary hover:text-white transition-colors text-sm font-medium"
           >
             <LogIn className="w-4 h-4 mr-1" />
-            Client Login
+            Login
           </a>
         </nav>
 
@@ -74,21 +74,21 @@ export function Navbar() {
               About
             </a>
             <a 
-              href="#services" 
+              href="/#services" 
               className="px-3 py-2 text-c6-dark hover:text-c6-primary"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Services
             </a>
             <a 
-              href="#features" 
+              href="/#features" 
               className="px-3 py-2 text-c6-dark hover:text-c6-primary"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Why Choose Us
             </a>
             <a 
-              href="#contact" 
+              href="/#contact" 
               className="px-3 py-2 text-c6-dark hover:text-c6-primary"
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -100,7 +100,7 @@ export function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <LogIn className="w-4 h-4 mr-1" />
-              Client Login
+              Login
             </a>
           </div>
         </div>

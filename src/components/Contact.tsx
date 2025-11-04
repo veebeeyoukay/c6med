@@ -78,8 +78,8 @@ export function Contact() {
               <div>
                 <h3 className="text-lg font-medium mb-1 text-c6-dark">Call Us</h3>
                 <p className="text-c6-dark/70">
-                  <a href="tel:+11234567890" className="hover:text-c6-primary">
-                    +1 (123) 456-7890
+                  <a href="tel:+16462394572" className="hover:text-c6-primary">
+                    (646) 239-4572
                   </a>
                 </p>
               </div>
@@ -92,8 +92,8 @@ export function Contact() {
               <div>
                 <h3 className="text-lg font-medium mb-1 text-c6-dark">Visit Us</h3>
                 <p className="text-c6-dark/70">
-                  123 Medical Plaza, Suite 200<br />
-                  Boston, MA 02115
+                  2095 West Danby Road<br />
+                  Newfield, NY 14867
                 </p>
               </div>
             </div>

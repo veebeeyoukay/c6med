@@ -54,7 +54,7 @@ export function Features() {
               ))}
             </ul>
             
-            <a href="#contact" className="btn-primary">
+            <a href="/#contact" className="btn-primary">
               Get Started Today
             </a>
           </div>

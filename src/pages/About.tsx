@@ -37,7 +37,7 @@ export default function About() {
               <p className="text-lg text-c6-dark/80 mb-6">
                 We are committed to creating evidence-based, compliant, and engaging content that resonates with medical experts and drives meaningful results for our pharmaceutical partners. By bridging scientific expertise with innovative communication strategies, we help transform complex medical information into impactful educational experiences.
               </p>
-              <a href="#contact" className="btn-primary inline-flex items-center">
+              <a href="/#contact" className="btn-primary inline-flex items-center">
                 Get in Touch
                 <ArrowRight className="ml-2 h-4 w-4" />
               </a>
@@ -231,50 +231,42 @@ export default function About() {
             </span>
             <h2 className="mb-6 text-c6-dark">Our Leadership Team</h2>
             <p className="text-lg text-c6-dark/80">
-              With decades of combined experience in pharmaceutical communications, our team brings unparalleled expertise to every project.
+              With extensive experience in pharmaceutical communications, our team brings unparalleled expertise to every project.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto justify-items-center">
             {[
               {
                 name: "Marcy Fink DuVal",
                 role: "Founder & CEO",
-                bio: "With over 25 years in healthcare communications, Marcy brings exceptional expertise in medical education and pharmaceutical marketing. Her background includes leadership positions at major healthcare communications agencies. Marcy holds an MBA and has led award-winning medical education initiatives throughout her career.",
-                image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                bio: "With over 25 years of experience in healthcare communications, Marcy Fink DuVal brings exceptional expertise in medical education and pharmaceutical marketing. She has held leadership positions at major healthcare communications agencies and has led award-winning medical education initiatives throughout her career. Marcy holds an MBA and is dedicated to creating trusted connections between pharmaceutical companies and medical experts.",
+                image: "/marcy-c6med.jpeg",
                 linkedin: "https://www.linkedin.com/in/marcy-fink-duval-25b33b7/"
-              },
-              {
-                name: "Michael Roberts, PharmD",
-                role: "Medical Director",
-                bio: "Michael ensures scientific accuracy across all our communications, leveraging his extensive background in pharmacology and clinical practice to develop evidence-based content that resonates with healthcare professionals.",
-                image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                linkedin: "#"
-              },
-              {
-                name: "Sarah Johnson, MS",
-                role: "Strategic Communications Lead",
-                bio: "Sarah translates complex medical information into compelling narratives that resonate with healthcare professionals. Her background in both science and communications gives her a unique perspective on effective medical education.",
-                image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                linkedin: "#"
               }
             ].map((member, index) => (
-              <div key={index} className="bg-gray-50 rounded-xl overflow-hidden transition-all hover:shadow-lg">
+              <div key={index} className="bg-gray-50 rounded-xl overflow-hidden transition-all hover:shadow-lg w-full max-w-sm">
                 <div className="relative">
                   <img 
                     src={member.image} 
                     alt={member.name} 
-                    className="w-full h-64 object-cover object-center"
+                    className="w-full h-64 object-cover object-center bg-gray-200"
+                    onError={(e) => {
+                      // Fallback to a simple placeholder if image fails to load
+                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name.split(' ').join('+'))}&size=600&background=e2efd9&color=4a7c59&bold=true`;
+                    }}
                   />
-                  <a 
-                    href={member.linkedin} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-c6-primary hover:text-white transition-colors"
-                    aria-label={`${member.name}'s LinkedIn Profile`}
-                  >
-                    <Linkedin className="h-5 w-5" />
-                  </a>
+                  {member.linkedin && member.linkedin !== '#' && (
+                    <a 
+                      href={member.linkedin} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-md hover:bg-c6-primary hover:text-white transition-colors"
+                      aria-label={`${member.name}'s LinkedIn Profile`}
+                    >
+                      <Linkedin className="h-5 w-5" />
+                    </a>
+                  )}
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-medium text-c6-dark">{member.name}</h3>
@@ -295,7 +287,7 @@ export default function About() {
             <p className="text-lg text-c6-dark/80 mb-8 max-w-2xl mx-auto">
               We're always looking for talented individuals who are passionate about medical communications and want to make a difference in healthcare education.
             </p>
-            <a href="#contact" className="btn-primary inline-flex items-center">
+            <a href="/#contact" className="btn-primary inline-flex items-center">
               Contact Us
               <ArrowRight className="ml-2 h-4 w-4" />
             </a>
