@@ -138,17 +138,52 @@ export default function Dashboard() {
 
     try {
       const path = getFilePath(fileStructure, fileId) || [];
-      const response = await fetch(`/api/documents/file?path=${encodeURIComponent(file.path)}`);
+      const filePath = file.path;
       
-      if (!response.ok) {
-        throw new Error('Failed to load file content');
+      // Check if it's a text file we can read directly
+      const textExtensions = ['.txt', '.md', '.csv', '.json', '.js', '.ts', '.jsx', '.tsx', '.html', '.css', '.xml'];
+      const isTextFile = textExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+      
+      let content = '';
+      
+      if (isTextFile) {
+        // Try to fetch directly from static documents folder first (production)
+        try {
+          const staticResponse = await fetch(`/documents/${filePath}`);
+          if (staticResponse.ok) {
+            content = await staticResponse.text();
+          } else {
+            // Fallback to API (development)
+            const apiResponse = await fetch(`/api/documents/file?path=${encodeURIComponent(filePath)}`);
+            if (!apiResponse.ok) {
+              throw new Error('Failed to load file content');
+            }
+            const apiData = await apiResponse.json();
+            content = apiData.content || 'No content available';
+          }
+        } catch (fetchErr) {
+          // If direct fetch fails, try API
+          const apiResponse = await fetch(`/api/documents/file?path=${encodeURIComponent(filePath)}`);
+          if (!apiResponse.ok) {
+            throw new Error('Failed to load file content');
+          }
+          const apiData = await apiResponse.json();
+          content = apiData.content || 'No content available';
+        }
+      } else {
+        // For binary files, use API
+        const response = await fetch(`/api/documents/file?path=${encodeURIComponent(filePath)}`);
+        if (!response.ok) {
+          throw new Error('Failed to load file content');
+        }
+        const data = await response.json();
+        content = data.content || 'No content available';
       }
 
-      const data = await response.json();
       const newTab: Tab = {
         id: fileId,
         name: file.name,
-        content: data.content || 'No content available',
+        content: content,
         path: path.join(' / '),
         filePath: file.path,
       };
