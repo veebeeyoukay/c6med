@@ -67,11 +67,45 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Get the documents directory path
-    // In Netlify functions, __dirname points to the function directory
-    // We need to go up to the repo root
-    const repoRoot = path.resolve(__dirname, '../..');
-    const documentsPath = path.join(repoRoot, 'documents');
+    // Try multiple possible paths for documents directory
+    // In Netlify functions, the working directory and __dirname can vary
+    const possiblePaths = [
+      path.resolve(__dirname, '../..', 'documents'), // From function dir up to repo root
+      path.resolve(process.cwd(), 'documents'), // From current working directory
+      path.resolve(process.cwd(), 'dist', 'documents'), // From dist folder (build output)
+      path.resolve('/opt/build/repo/documents'), // Netlify build environment
+      path.resolve('/opt/build/repo/dist/documents'), // Netlify build dist
+    ];
+    
+    let documentsPath = null;
+    for (const testPath of possiblePaths) {
+      try {
+        if (fs.existsSync(testPath) && fs.statSync(testPath).isDirectory()) {
+          documentsPath = testPath;
+          console.log('Found documents at:', documentsPath);
+          break;
+        }
+      } catch (e) {
+        // Continue to next path
+      }
+    }
+    
+    if (!documentsPath) {
+      console.error('Documents directory not found. Tried paths:', possiblePaths);
+      return {
+        statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({ 
+          error: 'Documents directory not found',
+          tried: possiblePaths,
+          cwd: process.cwd(),
+          __dirname: __dirname
+        }),
+      };
+    }
     
     const fileTree = buildFileTree(documentsPath, '');
     
@@ -87,13 +121,18 @@ exports.handler = async (event, context) => {
     };
   } catch (error) {
     console.error('Error building file tree:', error);
+    console.error('Stack:', error.stack);
     return {
       statusCode: 500,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify({ error: 'Failed to read documents directory' }),
+      body: JSON.stringify({ 
+        error: 'Failed to read documents directory',
+        message: error.message,
+        stack: error.stack
+      }),
     };
   }
 };

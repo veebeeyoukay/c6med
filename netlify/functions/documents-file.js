@@ -41,11 +41,38 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Get the documents directory path
-    // In Netlify functions, __dirname points to the function directory
-    // We need to go up to the repo root
-    const repoRoot = path.resolve(__dirname, '../..');
-    const documentsPath = path.join(repoRoot, 'documents');
+    // Try multiple possible paths for documents directory
+    const possiblePaths = [
+      path.resolve(__dirname, '../..', 'documents'),
+      path.resolve(process.cwd(), 'documents'),
+      path.resolve(process.cwd(), 'dist', 'documents'),
+      path.resolve('/opt/build/repo/documents'),
+      path.resolve('/opt/build/repo/dist/documents'),
+    ];
+    
+    let documentsPath = null;
+    for (const testPath of possiblePaths) {
+      try {
+        if (fs.existsSync(testPath) && fs.statSync(testPath).isDirectory()) {
+          documentsPath = testPath;
+          break;
+        }
+      } catch (e) {
+        // Continue to next path
+      }
+    }
+    
+    if (!documentsPath) {
+      console.error('Documents directory not found. Tried paths:', possiblePaths);
+      return {
+        statusCode: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({ error: 'Documents directory not found' }),
+      };
+    }
     
     // Sanitize path to prevent directory traversal
     const sanitizedPath = path.normalize(filePath).replace(/^(\.\.(\/|\\|$))+/, '');
