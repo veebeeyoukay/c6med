@@ -60,10 +60,19 @@ export default function Dashboard() {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch('/api/documents/tree');
+        
+        // Try to fetch static JSON file first (production)
+        let response = await fetch('/documents-tree.json');
+        
+        // If static file doesn't exist, fallback to API (development)
+        if (!response.ok) {
+          response = await fetch('/api/documents/tree');
+        }
+        
         if (!response.ok) {
           throw new Error('Failed to load documents');
         }
+        
         const data = await response.json();
         setFileStructure(data);
         // Expand all root folders by default

@@ -48,7 +48,8 @@ function buildFileTree(dirPath, basePath = '', idPrefix = '') {
 
 // Generate the file tree
 const documentsPath = path.resolve(__dirname, '../documents');
-const outputPath = path.resolve(__dirname, '../dist/documents-tree.json');
+const distPath = path.resolve(__dirname, '../dist');
+const outputPath = path.join(distPath, 'documents-tree.json');
 
 try {
   const fileTree = buildFileTree(documentsPath, '');
