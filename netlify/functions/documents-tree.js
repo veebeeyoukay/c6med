@@ -42,10 +42,26 @@ function buildFileTree(dirPath, basePath = '', idPrefix = '') {
 }
 
 exports.handler = async (event, context) => {
+  // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: '',
+    };
+  }
+
   // Only allow GET requests
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
       body: JSON.stringify({ error: 'Method not allowed' }),
     };
   }
@@ -64,6 +80,8 @@ exports.handler = async (event, context) => {
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
       body: JSON.stringify(fileTree),
     };
@@ -73,6 +91,7 @@ exports.handler = async (event, context) => {
       statusCode: 500,
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({ error: 'Failed to read documents directory' }),
     };

@@ -2,6 +2,20 @@
     command = "npm run build"
     publish = "dist"
 
+  # API routes - route to Netlify functions
+  [[redirects]]
+    from = "/api/documents/tree"
+    to = "/.netlify/functions/documents-tree"
+    status = 200
+    force = true
+
+  [[redirects]]
+    from = "/api/documents/file"
+    to = "/.netlify/functions/documents-file"
+    status = 200
+    force = true
+
+  # SPA redirect - catch all other routes
   [[redirects]]
     from = "/*"
     to = "/index.html"

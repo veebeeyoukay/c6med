@@ -2,10 +2,26 @@ const fs = require('fs');
 const path = require('path');
 
 exports.handler = async (event, context) => {
+  // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: '',
+    };
+  }
+
   // Only allow GET requests
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
       body: JSON.stringify({ error: 'Method not allowed' }),
     };
   }
@@ -18,6 +34,7 @@ exports.handler = async (event, context) => {
       statusCode: 400,
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({ error: 'File path is required' }),
     };
@@ -43,6 +60,7 @@ exports.handler = async (event, context) => {
         statusCode: 403,
         headers: {
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify({ error: 'Access denied' }),
       };
@@ -53,6 +71,7 @@ exports.handler = async (event, context) => {
         statusCode: 404,
         headers: {
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify({ error: 'File not found' }),
       };
@@ -64,6 +83,7 @@ exports.handler = async (event, context) => {
         statusCode: 400,
         headers: {
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify({ error: 'Path is a directory, not a file' }),
       };
@@ -82,6 +102,8 @@ exports.handler = async (event, context) => {
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
           },
           body: JSON.stringify({ content, path: filePath }),
         };
@@ -90,6 +112,7 @@ exports.handler = async (event, context) => {
           statusCode: 500,
           headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
           body: JSON.stringify({ error: `Failed to read file as text: ${error.message}` }),
         };
@@ -101,6 +124,8 @@ exports.handler = async (event, context) => {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
         },
         body: JSON.stringify({ 
           content: `This file (${ext}) is a binary file and cannot be displayed in the viewer. Please download it to view.`,
@@ -115,6 +140,7 @@ exports.handler = async (event, context) => {
       statusCode: 500,
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({ error: error.message || 'Failed to read file' }),
     };
