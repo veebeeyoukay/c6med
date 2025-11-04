@@ -2,6 +2,11 @@
     command = "npm run build"
     publish = "dist"
 
+  [[headers]]
+    for = "/*"
+    [headers.values]
+      Content-Security-Policy = "frame-ancestors *;"
+
   # API routes - route to Netlify functions
   [[redirects]]
     from = "/api/documents/tree"
