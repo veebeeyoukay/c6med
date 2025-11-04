@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -9,17 +9,21 @@ import {
   X, 
   Download,
   LogOut,
-  Menu
+  Menu,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
+import type { ImperativePanelHandle } from 'react-resizable-panels';
 import { cn } from '@/lib/utils';
 
 interface FileItem {
   id: string;
   name: string;
   type: 'file' | 'folder';
+  path: string;
   content?: string;
   children?: FileItem[];
 }
@@ -29,120 +33,51 @@ interface Tab {
   name: string;
   content: string;
   path: string;
+  filePath: string;
 }
-
-// File Explorer Root Directory
-// All files displayed in the file explorer should be placed in: /documents/
-// This is the root folder located at: /Volumes/dev/C6Med/c6med.com/documents/
-const FILE_EXPLORER_ROOT = '/documents';
-
-// Mock file structure
-const mockFileStructure: FileItem[] = [
-  {
-    id: '1',
-    name: 'Medical Communications',
-    type: 'folder',
-    children: [
-      {
-        id: '1-1',
-        name: 'Case Studies',
-        type: 'folder',
-        children: [
-          {
-            id: '1-1-1',
-            name: 'Oncology Program.pdf',
-            type: 'file',
-            content: 'This is a comprehensive case study about our oncology education program that reached over 5,000 oncologists...',
-          },
-          {
-            id: '1-1-2',
-            name: 'Cardiovascular Launch.pdf',
-            type: 'file',
-            content: 'Details about our cardiovascular treatment launch support and educational content for cardiologists...',
-          },
-        ],
-      },
-      {
-        id: '1-2',
-        name: 'Presentations',
-        type: 'folder',
-        children: [
-          {
-            id: '1-2-1',
-            name: 'Q4 2024 Review.pptx',
-            type: 'file',
-            content: 'Quarterly review presentation covering all medical communications initiatives...',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Client Documents',
-    type: 'folder',
-    children: [
-      {
-        id: '2-1',
-        name: 'Pharma Co A',
-        type: 'folder',
-        children: [
-          {
-            id: '2-1-1',
-            name: 'Project Proposal.docx',
-            type: 'file',
-            content: 'Project proposal for medical education program including timeline, budget, and deliverables...',
-          },
-          {
-            id: '2-1-2',
-            name: 'Meeting Notes.pdf',
-            type: 'file',
-            content: 'Meeting notes from client discussions regarding strategic communications approach...',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: '3',
-    name: 'Resources',
-    type: 'folder',
-    children: [
-      {
-        id: '3-1',
-        name: 'Templates',
-        type: 'folder',
-        children: [
-          {
-            id: '3-1-1',
-            name: 'Medical Education Template.docx',
-            type: 'file',
-            content: 'Standard template for medical education content creation...',
-          },
-        ],
-      },
-      {
-        id: '3-2',
-        name: 'Guidelines.pdf',
-        type: 'file',
-        content: 'Internal guidelines for pharmaceutical communications compliance and best practices...',
-      },
-    ],
-  },
-];
 
 export default function Dashboard() {
   const { logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['1', '2', '3']));
+  const sidebarPanelRef = useRef<ImperativePanelHandle>(null);
+  const [fileStructure, setFileStructure] = useState<FileItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
+  const [loadingFiles, setLoadingFiles] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
+      return;
     }
+
+    // Fetch file structure on mount
+    const fetchFileStructure = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch('/api/documents/tree');
+        if (!response.ok) {
+          throw new Error('Failed to load documents');
+        }
+        const data = await response.json();
+        setFileStructure(data);
+        // Expand all root folders by default
+        const rootIds = data.map((item: FileItem) => item.id);
+        setExpandedFolders(new Set(rootIds));
+      } catch (err: any) {
+        setError(err.message || 'Failed to load documents');
+        console.error('Error fetching file structure:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFileStructure();
   }, [isAuthenticated, navigate]);
 
   const toggleFolder = (folderId: string) => {
@@ -178,8 +113,8 @@ export default function Dashboard() {
     return null;
   };
 
-  const openFile = (fileId: string) => {
-    const file = findFileById(mockFileStructure, fileId);
+  const openFile = async (fileId: string) => {
+    const file = findFileById(fileStructure, fileId);
     if (!file || file.type !== 'file') return;
 
     // Check if file is already open
@@ -189,16 +124,47 @@ export default function Dashboard() {
       return;
     }
 
-    const path = getFilePath(mockFileStructure, fileId) || [];
-    const newTab: Tab = {
-      id: fileId,
-      name: file.name,
-      content: file.content || 'No content available',
-      path: path.join(' / '),
-    };
+    // Add to loading set
+    setLoadingFiles(prev => new Set(prev).add(fileId));
 
-    setTabs([...tabs, newTab]);
-    setActiveTabId(fileId);
+    try {
+      const path = getFilePath(fileStructure, fileId) || [];
+      const response = await fetch(`/api/documents/file?path=${encodeURIComponent(file.path)}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to load file content');
+      }
+
+      const data = await response.json();
+      const newTab: Tab = {
+        id: fileId,
+        name: file.name,
+        content: data.content || 'No content available',
+        path: path.join(' / '),
+        filePath: file.path,
+      };
+
+      setTabs([...tabs, newTab]);
+      setActiveTabId(fileId);
+    } catch (err: any) {
+      console.error('Error loading file:', err);
+      const path = getFilePath(fileStructure, fileId) || [];
+      const newTab: Tab = {
+        id: fileId,
+        name: file.name,
+        content: `Error loading file: ${err.message}`,
+        path: path.join(' / '),
+        filePath: file.path,
+      };
+      setTabs([...tabs, newTab]);
+      setActiveTabId(fileId);
+    } finally {
+      setLoadingFiles(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(fileId);
+        return newSet;
+      });
+    }
   };
 
   const closeTab = (tabId: string, e: React.MouseEvent) => {
@@ -217,56 +183,92 @@ export default function Dashboard() {
   };
 
   const downloadFile = (tab: Tab) => {
-    const blob = new Blob([tab.content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+    // Try to download the actual file if available, otherwise download content
+    const fileUrl = `/documents/${tab.filePath}`;
     const a = document.createElement('a');
-    a.href = url;
+    a.href = fileUrl;
     a.download = tab.name;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  };
+
+  const isMarkdownFile = (filename: string) => {
+    return filename.toLowerCase().endsWith('.md') || filename.toLowerCase().endsWith('.markdown');
+  };
+
+  const renderFileContent = (content: string, filename: string) => {
+    if (isMarkdownFile(filename)) {
+      // For markdown, we'll render it as formatted text (could be enhanced with a markdown renderer)
+      return (
+        <div className="prose prose-sm max-w-none">
+          <pre className="whitespace-pre-wrap font-sans text-c6-dark bg-gray-50 p-4 rounded-lg border">
+            {content}
+          </pre>
+        </div>
+      );
+    }
+    return (
+      <pre className="text-sm text-c6-dark whitespace-pre-wrap font-mono bg-gray-50 p-4 rounded-lg border">
+        {content}
+      </pre>
+    );
   };
 
   const renderFileTree = (items: FileItem[], level = 0) => {
-    return items.map((item) => (
-      <div key={item.id}>
-        <div
-          className={cn(
-            "flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-100 cursor-pointer transition-colors",
-            level > 0 && "ml-4"
-          )}
-          style={{ paddingLeft: `${level * 16 + 8}px` }}
-          onClick={() => {
-            if (item.type === 'folder') {
-              toggleFolder(item.id);
-            } else {
-              openFile(item.id);
-            }
-          }}
-        >
-          {item.type === 'folder' ? (
-            <>
-              {expandedFolders.has(item.id) ? (
-                <ChevronDown className="h-4 w-4 text-c6-dark/60" />
-              ) : (
-                <ChevronRight className="h-4 w-4 text-c6-dark/60" />
-              )}
-              <Folder className="h-4 w-4 text-c6-primary" />
-            </>
-          ) : (
-            <>
-              <div className="w-4" />
-              <File className="h-4 w-4 text-c6-dark/60" />
-            </>
-          )}
-          <span className="text-sm text-c6-dark">{item.name}</span>
+    if (items.length === 0) {
+      return (
+        <div className="px-4 py-2 text-sm text-c6-dark/60">
+          No files found
         </div>
-        {item.type === 'folder' && expandedFolders.has(item.id) && item.children && (
-          <div>{renderFileTree(item.children, level + 1)}</div>
-        )}
-      </div>
-    ));
+      );
+    }
+
+    return items.map((item) => {
+      const isLoading = loadingFiles.has(item.id);
+      return (
+        <div key={item.id}>
+          <div
+            className={cn(
+              "flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-100 cursor-pointer transition-colors",
+              level > 0 && "ml-4"
+            )}
+            style={{ paddingLeft: `${level * 16 + 8}px` }}
+            onClick={() => {
+              if (item.type === 'folder') {
+                toggleFolder(item.id);
+              } else {
+                openFile(item.id);
+              }
+            }}
+          >
+            {item.type === 'folder' ? (
+              <>
+                {expandedFolders.has(item.id) ? (
+                  <ChevronDown className="h-4 w-4 text-c6-dark/60" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-c6-dark/60" />
+                )}
+                <Folder className="h-4 w-4 text-c6-primary" />
+              </>
+            ) : (
+              <>
+                <div className="w-4" />
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 text-c6-dark/60 animate-spin" />
+                ) : (
+                  <File className="h-4 w-4 text-c6-dark/60" />
+                )}
+              </>
+            )}
+            <span className="text-sm text-c6-dark">{item.name}</span>
+          </div>
+          {item.type === 'folder' && expandedFolders.has(item.id) && item.children && (
+            <div>{renderFileTree(item.children, level + 1)}</div>
+          )}
+        </div>
+      );
+    });
   };
 
   const activeTab = tabs.find(tab => tab.id === activeTabId);
@@ -279,7 +281,13 @@ export default function Dashboard() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => {
+              if (sidebarOpen) {
+                sidebarPanelRef.current?.collapse();
+              } else {
+                sidebarPanelRef.current?.expand();
+              }
+            }}
           >
             <Menu className="h-5 w-5" />
           </Button>
@@ -299,96 +307,134 @@ export default function Dashboard() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar - File Explorer */}
-        <aside
-          className={cn(
-            "bg-white border-r border-gray-200 transition-all duration-300",
-            sidebarOpen ? "w-64" : "w-0 overflow-hidden"
-          )}
-        >
-          {sidebarOpen && (
+        <ResizablePanelGroup direction="horizontal" className="min-h-0">
+          {/* Sidebar - File Explorer */}
+          <ResizablePanel
+            ref={sidebarPanelRef}
+            defaultSize={20}
+            minSize={15}
+            maxSize={40}
+            collapsible={true}
+            collapsedSize={0}
+            onCollapse={() => setSidebarOpen(false)}
+            onExpand={() => setSidebarOpen(true)}
+            className="bg-white border-r border-gray-200"
+          >
             <div className="h-full flex flex-col">
-              <div className="px-4 py-3 border-b border-gray-200">
+              <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-c6-dark">File Explorer</h2>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => sidebarPanelRef.current?.collapse()}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
               <ScrollArea className="flex-1">
                 <div className="p-2">
-                  {renderFileTree(mockFileStructure)}
+                  {loading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-c6-primary" />
+                      <span className="ml-2 text-sm text-c6-dark/60">Loading documents...</span>
+                    </div>
+                  ) : error ? (
+                    <div className="px-4 py-2 text-sm text-red-600">
+                      {error}
+                    </div>
+                  ) : (
+                    renderFileTree(fileStructure)
+                  )}
                 </div>
               </ScrollArea>
             </div>
-          )}
-        </aside>
+          </ResizablePanel>
+          
+          <ResizableHandle withHandle />
 
-        {/* Main Content Area */}
-        <main className="flex-1 flex flex-col overflow-hidden">
-          {/* Tabs */}
-          {tabs.length > 0 && (
-            <div className="bg-gray-100 border-b border-gray-200">
-              <div className="flex items-center gap-1 px-2 overflow-x-auto">
-                {tabs.map((tab) => (
-                  <div
-                    key={tab.id}
-                    className={cn(
-                      "flex items-center gap-2 px-4 py-2 border-b-2 transition-colors cursor-pointer group",
-                      activeTabId === tab.id
-                        ? "border-c6-primary bg-white"
-                        : "border-transparent hover:bg-gray-200"
-                    )}
-                    onClick={() => setActiveTabId(tab.id)}
-                  >
-                    <span className="text-sm text-c6-dark whitespace-nowrap">{tab.name}</span>
-                    <button
-                      onClick={(e) => closeTab(tab.id, e)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 hover:bg-gray-300 rounded"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* File Content */}
-          <div className="flex-1 overflow-auto">
-            {activeTab ? (
-              <div className="h-full flex flex-col">
-                <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-c6-dark/60">{activeTab.path}</p>
-                  </div>
+          {/* Main Content Area */}
+          <ResizablePanel defaultSize={sidebarOpen ? 80 : 100} minSize={60}>
+            <main className="h-full flex flex-col overflow-hidden">
+              {!sidebarOpen && (
+                <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center">
                   <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => downloadFile(activeTab)}
-                    className="flex items-center gap-2"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-r-lg rounded-l-none border-r border-t border-b border-gray-200 bg-white shadow-sm"
+                    onClick={() => sidebarPanelRef.current?.expand()}
                   >
-                    <Download className="h-4 w-4" />
-                    Download
+                    <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
-                <ScrollArea className="flex-1">
-                  <div className="p-6">
-                    <pre className="text-sm text-c6-dark whitespace-pre-wrap font-mono bg-gray-50 p-4 rounded-lg border">
-                      {activeTab.content}
-                    </pre>
+              )}
+              {/* Tabs */}
+              {tabs.length > 0 && (
+                <div className="bg-gray-100 border-b border-gray-200">
+                  <div className="flex items-center gap-1 px-2 overflow-x-auto">
+                    {tabs.map((tab) => (
+                      <div
+                        key={tab.id}
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 border-b-2 transition-colors cursor-pointer group",
+                          activeTabId === tab.id
+                            ? "border-c6-primary bg-white"
+                            : "border-transparent hover:bg-gray-200"
+                        )}
+                        onClick={() => setActiveTabId(tab.id)}
+                      >
+                        <span className="text-sm text-c6-dark whitespace-nowrap">{tab.name}</span>
+                        <button
+                          onClick={(e) => closeTab(tab.id, e)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 hover:bg-gray-300 rounded"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                </ScrollArea>
-              </div>
-            ) : (
-              <div className="h-full flex items-center justify-center">
-                <div className="text-center">
-                  <File className="h-16 w-16 text-c6-dark/20 mx-auto mb-4" />
-                  <p className="text-c6-dark/60">No file selected</p>
-                  <p className="text-sm text-c6-dark/40 mt-2">
-                    Click on a file in the explorer to view its contents
-                  </p>
                 </div>
+              )}
+
+              {/* File Content */}
+              <div className="flex-1 overflow-auto">
+                {activeTab ? (
+                  <div className="h-full flex flex-col">
+                    <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-c6-dark/60">{activeTab.path}</p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => downloadFile(activeTab)}
+                        className="flex items-center gap-2"
+                      >
+                        <Download className="h-4 w-4" />
+                        Download
+                      </Button>
+                    </div>
+                    <ScrollArea className="flex-1">
+                      <div className="p-6">
+                        {renderFileContent(activeTab.content, activeTab.name)}
+                      </div>
+                    </ScrollArea>
+                  </div>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <div className="text-center">
+                      <File className="h-16 w-16 text-c6-dark/20 mx-auto mb-4" />
+                      <p className="text-c6-dark/60">No file selected</p>
+                      <p className="text-sm text-c6-dark/40 mt-2">
+                        Click on a file in the explorer to view its contents
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </main>
+            </main>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );
