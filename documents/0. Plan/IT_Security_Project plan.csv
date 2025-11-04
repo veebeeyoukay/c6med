@@ -1,0 +1,38 @@
+﻿Task ID,Phase,Task Description,Responsible Party,Start Date,End Date,Duration (Days),Status,Dependencies,Resources Required,Estimated Cost,Priority,Notes
+T-01,1,Review and finalize WISP documents,Management,5/1/2025,5/15/2025,15,Not Started,None,Management time,$0,High,Internal review only
+T-02,1,Distribute Acceptable Use Policy to all staff,Management,5/16/2025,5/23/2025,7,Not Started,T-01,Management time,$0,High,Require signatures from all team members
+T-03,1,Implement LastPass Enterprise,Security Lead,5/16/2025,5/30/2025,14,Not Started,T-01,IT support time,$432/year,High,$6/user/month for 6 users (can scale as team grows)
+T-04,1,Enable 2FA for key business applications,All Staff,5/23/2025,6/6/2025,14,Not Started,T-03,Staff time,$0,High,Focus on O365 and other critical platforms
+T-05,1,Verify device encryption status for all team members,Security Lead,5/23/2025,6/6/2025,14,Not Started,T-02,IT support time,$0,High,May identify devices requiring encryption
+T-06,1,Develop incident response process,Security Lead,5/23/2025,6/13/2025,21,Not Started,T-01,Security Lead time,$0,High,Create simple process for small organization
+T-07,1,Review Novartis MSA requirements in detail,Management,5/16/2025,5/30/2025,14,Not Started,None,Management time,$0,Critical,Identify any specific compliance gaps
+T-08,1,Implement basic backup solution for critical data,Security Lead,5/23/2025,6/13/2025,21,Not Started,T-01,IT support time,$900/year,High,Consider Microsoft 365 backup solution
+T-09,2,"Consolidate all file storage from Dropbox to SharePoint/O365, including repository cleanup",All Staff,6/16/2025,7/11/2025,25,Not Started,T-04,Staff time + IT support,$0,High,"Use existing O365 licenses, complete thorough cleanup before migration"
+T-10,2,Configure O365 security settings,Security Lead,6/16/2025,6/27/2025,11,Not Started,T-04,IT support time,$0,Medium,Enable available security features
+T-11,2,Develop onboarding/offboarding security checklist,Management,6/16/2025,6/27/2025,11,Not Started,T-01,Management time,$0,Medium,Align with W-2 employee transition
+T-12,2,Implement VPN solution for remote work,Security Lead,6/30/2025,7/18/2025,18,Not Started,T-05,IT support time,$900/year,Medium,$15/user/month for 5 users (can scale)
+T-13,2,Create data classification guidelines,Management,6/30/2025,7/18/2025,18,Not Started,T-01,Management time,$0,Medium,Focus on pharmaceutical client data
+T-14,2,Develop basic vendor assessment questionnaire,Security Lead,6/30/2025,7/18/2025,18,Not Started,T-01,Security Lead time,$0,Medium,Simple form for small vendors
+T-15,2,Conduct initial vendor security assessments,Security Lead,7/21/2025,8/8/2025,18,Not Started,T-14,Security Lead time,$0,Medium,Focus on critical service providers
+T-16,2,Implement system update verification process,Security Lead,7/21/2025,8/8/2025,18,Not Started,T-05,IT support time,$0,Medium,Simple process to confirm weekly updates
+T-17,3,Security awareness training program development,Security Lead,8/11/2025,9/5/2025,25,Not Started,T-01,Security Lead time,"$2,000",Medium,Consider outsourced training platform
+T-18,3,Deliver initial security awareness training,All Staff,9/8/2025,9/19/2025,11,Not Started,T-17,Staff time,$0,Medium,Schedule multiple sessions
+T-19,3,Evaluate security monitoring options,Security Lead,8/11/2025,9/5/2025,25,Not Started,T-10,Security Lead time,$0,Low,Focus on options for small businesses
+T-20,3,Implement selected monitoring solution,Security Lead,9/22/2025,10/10/2025,18,Not Started,T-19,IT support time,"$6,000/year",Low,Estimated cost for basic monitoring
+T-21,3,Develop business continuity plan,Management,8/11/2025,9/5/2025,25,Not Started,T-13,Management time,$0,Low,Simple plan for critical functions
+T-22,3,Test backup and recovery procedures,Security Lead,9/8/2025,9/19/2025,11,Not Started,T-08,IT support time,$0,Medium,Verify recovery capabilities
+T-23,3,Conduct first quarterly access review,Management,9/8/2025,9/19/2025,11,Not Started,T-04,Management time,$0,Medium,Document results
+T-24,3,Implement simple risk management process,Security Lead,9/22/2025,10/10/2025,18,Not Started,T-01,Security Lead time,$0,Low,Quarterly risk review
+T-25,3,Conduct phishing simulation exercise,Security Lead,10/13/2025,10/24/2025,11,Not Started,T-18,Security Lead time,$500,Low,Simple test for awareness
+T-26,4,Prepare for cybersecurity insurance application,Management,10/27/2025,11/7/2025,11,Not Started,T-01 through T-25,Management time,$0,High,Gather documentation of controls
+T-27,4,Engage external security consultant for review,Management,11/10/2025,11/28/2025,18,Not Started,T-26,Management time,"$5,000",Medium,Independent verification
+T-28,4,Apply for cybersecurity insurance policy,Management,12/1/2025,12/12/2025,11,Not Started,T-27,Management time,Varies,High,Premium will vary based on controls
+T-29,4,First annual security program review,Management,12/15/2025,12/31/2025,16,Not Started,All previous tasks,Management time,$0,Medium,Document progress and set goals
+T-30,4,Plan Year 2 security initiatives,Management,1/5/2026,1/16/2026,11,Not Started,T-29,Management time,$0,Medium,Based on Year 1 lessons learned
+T-31,1,Implement Slack for internal team communications,Security Lead,5/16/2025,5/30/2025,14,Not Started,T-01,IT support time,$900/year (estimate),High,"$8/user/month for Business+ Plan, separate from client Teams environments"
+T-32,2,Review and select appropriate Office 365 license types for team members,Management,6/16/2025,6/27/2025,11,Not Started,T-31,Management time,Varies by selection,Medium,Evaluate Business Basic vs. Business Standard based on specific requirements
+T-33,2,Develop SharePoint access audit capability and reports,Security Lead,6/30/2025,7/18/2025,18,Not Started,T-09,IT support time,$500 (one-time),Medium,Create automated reports for access recertification process
+T-34,1,Conduct calendar sharing and permissions training for team,Security Lead,5/23/2025,5/30/2025,7,Not Started,T-01,Security Lead time,$0,Medium,Cover both browser and desktop versions of calendar sharing
+T-35,2,Create SOP for distribution list management (internal and external),Security Lead,6/16/2025,6/27/2025,11,Not Started,T-01,Security Lead time,$0,Medium,Document procedures for creating and managing distribution lists
+T-36,2,Implement automated backup solution for critical shared client documents,Security Lead,6/30/2025,7/18/2025,18,Not Started,T-09,IT support time,"$1,200/year",High,Focus on Novartis shared documents to prevent data loss
+T-37,2,Conduct training session on document version control features,Security Lead,7/1/2025,7/8/2025,7,Not Started,T-36,Security Lead time,$0,Medium,Ensure team understands version history in both SharePoint and client environments
