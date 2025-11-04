@@ -171,13 +171,9 @@ export default function Dashboard() {
           content = apiData.content || 'No content available';
         }
       } else {
-        // For binary files, use API
-        const response = await fetch(`/api/documents/file?path=${encodeURIComponent(filePath)}`);
-        if (!response.ok) {
-          throw new Error('Failed to load file content');
-        }
-        const data = await response.json();
-        content = data.content || 'No content available';
+        // For binary files, show a message that they need to be downloaded
+        const ext = file.name.split('.').pop()?.toLowerCase() || '';
+        content = `This file (${ext.toUpperCase()}) is a binary file and cannot be displayed in the viewer. Please use the Download button to view it.`;
       }
 
       const newTab: Tab = {
