@@ -15,22 +15,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const login = (email: string, password: string): boolean => {
-    // Simple local authentication - in production, this would call an API
-    // For demo purposes, accept any email/password or use default credentials
-    const defaultEmail = 'admin@c6med.com';
-    const defaultPassword = 'admin123';
+    // User accounts database
+    const users = [
+      { email: 'micki@mickiboas.com', password: 'C6medSecDocs2025!' },
+      { email: 'marcy.duval@c6med.com', password: 'C6medSecDocs2025!' },
+      { email: 'jen.mellace@c6med.com', password: 'C6medSecDocs2025!' },
+      { email: 'vikas@JustProtect.co', password: 'C6medSecDocs2025!' },
+    ];
+
+    // Check credentials against user database
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
     
-    if (email === defaultEmail && password === defaultPassword) {
+    if (user) {
       localStorage.setItem('c6med_auth', 'true');
-      localStorage.setItem('c6med_user', email);
-      setIsAuthenticated(true);
-      return true;
-    }
-    
-    // Also accept any non-empty credentials for demo
-    if (email && password) {
-      localStorage.setItem('c6med_auth', 'true');
-      localStorage.setItem('c6med_user', email);
+      localStorage.setItem('c6med_user', user.email);
       setIsAuthenticated(true);
       return true;
     }

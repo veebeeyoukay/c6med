@@ -60,7 +60,7 @@ export default function Login() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@c6med.com"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
@@ -94,13 +94,6 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-c6-light/50 rounded-lg">
-            <p className="text-sm text-c6-dark/70 text-center">
-              <strong>Demo credentials:</strong><br />
-              Email: admin@c6med.com<br />
-              Password: admin123
-            </p>
-          </div>
 
           <div className="mt-6 text-center">
             <a
