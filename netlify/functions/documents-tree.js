@@ -67,47 +67,71 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Try multiple possible paths for documents directory
-    // In Netlify functions, the working directory and __dirname can vary
-    const possiblePaths = [
-      path.resolve(__dirname, '../..', 'documents'), // From function dir up to repo root
-      path.resolve(process.cwd(), 'documents'), // From current working directory
-      path.resolve(process.cwd(), 'dist', 'documents'), // From dist folder (build output)
-      path.resolve('/opt/build/repo/documents'), // Netlify build environment
-      path.resolve('/opt/build/repo/dist/documents'), // Netlify build dist
+    // First, try to read the pre-generated JSON file from dist
+    const possibleJsonPaths = [
+      path.resolve(__dirname, '../..', 'dist', 'documents-tree.json'),
+      path.resolve(process.cwd(), 'dist', 'documents-tree.json'),
+      path.resolve('/opt/build/repo/dist/documents-tree.json'),
     ];
     
-    let documentsPath = null;
-    for (const testPath of possiblePaths) {
+    let fileTree = null;
+    for (const jsonPath of possibleJsonPaths) {
       try {
-        if (fs.existsSync(testPath) && fs.statSync(testPath).isDirectory()) {
-          documentsPath = testPath;
-          console.log('Found documents at:', documentsPath);
+        if (fs.existsSync(jsonPath)) {
+          const jsonContent = fs.readFileSync(jsonPath, 'utf-8');
+          fileTree = JSON.parse(jsonContent);
+          console.log('Loaded file tree from JSON:', jsonPath);
           break;
         }
       } catch (e) {
-        // Continue to next path
+        console.log('Failed to read JSON from', jsonPath, e.message);
       }
     }
     
-    if (!documentsPath) {
-      console.error('Documents directory not found. Tried paths:', possiblePaths);
-      return {
-        statusCode: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({ 
-          error: 'Documents directory not found',
-          tried: possiblePaths,
-          cwd: process.cwd(),
-          __dirname: __dirname
-        }),
-      };
+    // If JSON not found, try to build from documents directory
+    if (!fileTree) {
+      console.log('JSON file not found, trying to build from documents directory...');
+      const possiblePaths = [
+        path.resolve(__dirname, '../..', 'documents'),
+        path.resolve(__dirname, '../..', 'dist', 'documents'),
+        path.resolve(process.cwd(), 'documents'),
+        path.resolve(process.cwd(), 'dist', 'documents'),
+        path.resolve('/opt/build/repo/documents'),
+        path.resolve('/opt/build/repo/dist/documents'),
+      ];
+      
+      let documentsPath = null;
+      for (const testPath of possiblePaths) {
+        try {
+          if (fs.existsSync(testPath) && fs.statSync(testPath).isDirectory()) {
+            documentsPath = testPath;
+            console.log('Found documents at:', documentsPath);
+            break;
+          }
+        } catch (e) {
+          // Continue to next path
+        }
+      }
+      
+      if (!documentsPath) {
+        console.error('Documents directory not found. Tried paths:', possiblePaths);
+        return {
+          statusCode: 500,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({ 
+            error: 'Documents directory not found',
+            tried: possiblePaths,
+            cwd: process.cwd(),
+            __dirname: __dirname
+          }),
+        };
+      }
+      
+      fileTree = buildFileTree(documentsPath, '');
     }
-    
-    const fileTree = buildFileTree(documentsPath, '');
     
     return {
       statusCode: 200,

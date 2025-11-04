@@ -42,12 +42,14 @@ exports.handler = async (event, context) => {
 
   try {
     // Try multiple possible paths for documents directory
+    // Prefer dist/documents since that's where files are copied during build
     const possiblePaths = [
-      path.resolve(__dirname, '../..', 'documents'),
-      path.resolve(process.cwd(), 'documents'),
-      path.resolve(process.cwd(), 'dist', 'documents'),
-      path.resolve('/opt/build/repo/documents'),
+      path.resolve(__dirname, '../..', 'dist', 'documents'),
       path.resolve('/opt/build/repo/dist/documents'),
+      path.resolve(__dirname, '../..', 'documents'),
+      path.resolve(process.cwd(), 'dist', 'documents'),
+      path.resolve(process.cwd(), 'documents'),
+      path.resolve('/opt/build/repo/documents'),
     ];
     
     let documentsPath = null;
@@ -55,6 +57,7 @@ exports.handler = async (event, context) => {
       try {
         if (fs.existsSync(testPath) && fs.statSync(testPath).isDirectory()) {
           documentsPath = testPath;
+          console.log('Found documents at:', documentsPath);
           break;
         }
       } catch (e) {
@@ -64,13 +67,17 @@ exports.handler = async (event, context) => {
     
     if (!documentsPath) {
       console.error('Documents directory not found. Tried paths:', possiblePaths);
+      console.error('CWD:', process.cwd(), 'Dirname:', __dirname);
       return {
         statusCode: 500,
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
         },
-        body: JSON.stringify({ error: 'Documents directory not found' }),
+        body: JSON.stringify({ 
+          error: 'Documents directory not found',
+          tried: possiblePaths
+        }),
       };
     }
     
